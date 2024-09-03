@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import exceptions.UserAlreadyExistsException;
 import models.Book;
 import models.User;
 import org.bson.Document;
@@ -17,17 +18,35 @@ import static com.mongodb.client.model.Filters.eq;
 public class MongoDBUtil {
     private static MongoClient mongoClient = new MongoClient("localhost", 27017);
     private static MongoDatabase database = mongoClient.getDatabase("BookManagement");
-    private static MongoCollection<Document> collection = database.getCollection("Users");
+    private static MongoCollection<Document> userCollection = database.getCollection("Users");
     private static MongoCollection<Document> booksCollection = database.getCollection("Books");
 
     public static User authenticate(String username, String password) {
-        Document userDoc = collection.find(new Document("username", username)).first();
+        Document userDoc = userCollection.find(new Document("username", username)).first();
         if (userDoc != null) {
             String hashedPassword = userDoc.getString("password");
             if (BCrypt.checkpw(password, hashedPassword)) {
                 boolean admin = userDoc.getBoolean("admin", false);
                 return new User(username, password, admin);
             }
+        }
+        return null;
+    }
+
+    public static User registration(String username, String password) throws UserAlreadyExistsException {
+        if (!username.isEmpty() && !password.isEmpty()) {
+            Document existingUser = userCollection.find(new Document("username", username)).first();
+
+            if(existingUser != null) {
+                throw new UserAlreadyExistsException();
+            }
+
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            Document userDoc = new Document("username", username)
+                    .append("password", hashedPassword)
+                    .append("admin", false);
+            userCollection.insertOne(userDoc);
+            return new User(username, hashedPassword, false);
         }
         return null;
     }
