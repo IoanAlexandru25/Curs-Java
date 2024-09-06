@@ -1,4 +1,4 @@
-package com.example.demo1;
+package main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,7 +12,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/login-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 700, 500);
             stage.setTitle("Your best library store");
             stage.setScene(scene);

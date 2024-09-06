@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER_LEFT" prefHeight="350.0" prefWidth="350.0" spacing="10" style="-fx-background-color: #B2BABB;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.BookFormController">
+<VBox alignment="CENTER_LEFT" prefHeight="350.0" prefWidth="350.0" spacing="10" style="-fx-background-color: #B2BABB;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BookFormController">
     <Label text="Title:">
         <font>
             <Font size="18.0" />

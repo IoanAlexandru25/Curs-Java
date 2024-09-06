@@ -1,4 +1,4 @@
-package com.example.demo1;
+package utils;
 
 import com.mongodb.*;
 import com.mongodb.client.FindIterable;
@@ -10,18 +10,31 @@ import models.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.mindrot.jbcrypt.BCrypt;
+import proxy.AbstractAuthenticationService;
+
 import java.util.List;
 import java.util.ArrayList;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
-public class MongoDBUtil {
+public class MongoDBUtil implements AbstractAuthenticationService {
     private static MongoClient mongoClient = new MongoClient("localhost", 27017);
     private static MongoDatabase database = mongoClient.getDatabase("BookManagement");
     private static MongoCollection<Document> userCollection = database.getCollection("Users");
     private static MongoCollection<Document> booksCollection = database.getCollection("Books");
+    private static MongoCollection<Document> devicesCollection = database.getCollection("Devices");
 
-    public static User authenticate(String username, String password) {
+    public static MongoCollection<Document> getDevicesCollection() {
+        return devicesCollection;
+    }
+
+    public static MongoCollection<Document> getUserCollection() {
+        return userCollection;
+    }
+
+    @Override
+    public User authentication(String username, String password, String deviceId) {
         Document userDoc = userCollection.find(new Document("username", username)).first();
         if (userDoc != null) {
             String hashedPassword = userDoc.getString("password");
@@ -33,7 +46,7 @@ public class MongoDBUtil {
         return null;
     }
 
-    public static User registration(String username, String password) throws UserAlreadyExistsException {
+    public User registration(String username, String password) throws UserAlreadyExistsException {
         if (!username.isEmpty() && !password.isEmpty()) {
             Document existingUser = userCollection.find(new Document("username", username)).first();
 
@@ -49,6 +62,11 @@ public class MongoDBUtil {
             return new User(username, hashedPassword, false);
         }
         return null;
+    }
+
+    private Document getDeviceDocument(String username, String deviceId) {
+        MongoCollection<Document> userCollection = getUserCollection();
+        return userCollection.find(and(eq("username", username), eq("deviceId", deviceId))).first();
     }
     public static void addBook(Book book) {
         Document doc = new Document("title", book.getTitle())
@@ -85,5 +103,4 @@ public class MongoDBUtil {
                 .append("publicationYear", book.getPublicationYear());
         booksCollection.updateOne(eq("_id", book.getId()), new Document("$set", doc));
     }
-
 }

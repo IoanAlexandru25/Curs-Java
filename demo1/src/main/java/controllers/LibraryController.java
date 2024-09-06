@@ -1,4 +1,4 @@
-package com.example.demo1;
+package controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +14,7 @@ import models.Book;
 import models.User;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import utils.MongoDBUtil;
 
 
 public class LibraryController {
@@ -60,7 +61,7 @@ public class LibraryController {
 
     private void showBookDialog(Book book, String title, boolean isEditing, LibraryController libraryController) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo1/book-form.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/book-form.fxml"));
             Parent root = loader.load();
 
             BookFormController controller = loader.getController();

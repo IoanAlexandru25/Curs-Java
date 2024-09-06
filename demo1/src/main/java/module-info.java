@@ -7,10 +7,14 @@ module com.example.demo1 {
     requires java.management;
 
 
-    opens com.example.demo1 to javafx.fxml;
-    exports com.example.demo1;
+    opens controllers to javafx.fxml;
+    exports controllers;
     exports models;
     opens models to javafx.fxml;
+    exports main;
+    opens main to javafx.fxml;
+    exports utils;
+    opens utils to javafx.fxml;
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.demo1;
+package controllers;
 
 import exceptions.UserAlreadyExistsException;
 import javafx.fxml.FXML;
@@ -10,10 +10,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import models.User;
+import proxy.AbstractAuthenticationService;
+import proxy.AuthenticationServiceProxy;
+import utils.DeviceUtil;
+import utils.MongoDBUtil;
 
 import java.io.IOException;
 
 public class LoginController {
+    private MongoDBUtil mongoDBUtil = new MongoDBUtil();
+
+    private AbstractAuthenticationService abstractAuthenticationService;
+
+    private String deviceId;
 
     @FXML
     private TextField usernameField;
@@ -36,15 +45,24 @@ public class LoginController {
     @FXML
     private Button registerButton;
 
+    public LoginController() {
+        this.abstractAuthenticationService = new AuthenticationServiceProxy(this, mongoDBUtil);
+        this.deviceId = DeviceUtil.getDeviceId();
+    }
+
+    public void setFailLoginMessage(String failMessage) {
+        failLoginMessage.setText(failMessage);
+    }
+
     public void handleLoginButtonAction() {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        User loggedInUser = MongoDBUtil.authenticate(username, password);
+        User loggedInUser = abstractAuthenticationService.authentication(username, password, deviceId);
 
         if (loggedInUser != null) {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("library-view.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/library-view.fxml"));
                 Scene libraryScene = new Scene(fxmlLoader.load());
 
                 LibraryController libraryController = fxmlLoader.getController();
@@ -70,7 +88,7 @@ public class LoginController {
 
         User registeredUser = null;
         try {
-            registeredUser = MongoDBUtil.registration(username, password);
+            registeredUser = mongoDBUtil.registration(username, password);
         } catch (UserAlreadyExistsException e) {
             failRegisterMessage.setVisible(false);
             failLoginMessage.setVisible(false);

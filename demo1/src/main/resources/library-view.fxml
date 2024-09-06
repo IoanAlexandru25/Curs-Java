@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #b2babb;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo1.LibraryController">
+<BorderPane prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #b2babb;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LibraryController">
     <padding>
         <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
