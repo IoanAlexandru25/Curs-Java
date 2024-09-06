@@ -5,5 +5,3 @@ In this project we used new elements, such as:
 - hashing passwords using BCrypt
 - design patterns, more specifically we used a proxy to manage unsuccessful login attempts
 - JavaFX and Scene Builder for frame making
-
-This is just a beta version, the final version will be available in the near future.
